@@ -3,6 +3,7 @@ package it.polito.tdp.poweroutages.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.Graphs;
@@ -14,6 +15,8 @@ import it.polito.tdp.poweroutages.db.PowerOutagesDAO;
 public class Model {
 	SimpleWeightedGraph<Nerc, DefaultWeightedEdge> graph;
 	NercIdMap nIdMap;
+	
+	Simulatore sim = new Simulatore();
 	
 	PowerOutagesDAO dao = new PowerOutagesDAO();
 	
@@ -57,6 +60,20 @@ public class Model {
 		
 		Collections.sort(correlatedNercs);
 		return correlatedNercs;
+	}
+	
+	public void simula(int k) {
+		
+		sim.init(k, dao.loadAllPowerOutages(nIdMap), nIdMap, graph);
+		sim.run();
+	}
+	
+	public int getCatastrofi() {
+		return sim.getCatastrofi();
+	}
+	
+	public Map<Nerc, Long> getBonus(){
+		return sim.getBonus();
 	}
 
 }
