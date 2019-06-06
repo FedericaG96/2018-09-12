@@ -14,7 +14,7 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 
 public class Simulatore {
 	
-	//Modello del modno
+	//Modello del mondo
 	private Graph<Nerc,DefaultWeightedEdge> grafo;
 	private List<PowerOutage> powerOutage;
 	private Map<Nerc, Set<Nerc>> prestiti;
@@ -47,7 +47,9 @@ public class Simulatore {
 		//inserisco gli eventi iniziali
 		for(PowerOutage po : this.powerOutage) {
 			//imposto a null il donatore perchè all'inizio non si sa
+			//  la data dell'evento INIZIO_INTERRUZIONE corrisponde alla data di inizio interruzione
 			Evento e = new Evento(Evento.Tipo.INIZIO_INTERRUZIONE, po.getNerc(), null, po.getInizio(), po.getInizio(),po.getFine());
+			queue.add(e);
 		}
 	}
 
@@ -71,11 +73,12 @@ public class Simulatore {
 				//altrimenti prendo quello con peso arco minore
 				if(this.prestiti.get(nerc).size()>0) {
 					//scelgo tra i miei debitori
-					double min = Long.MAX_VALUE;
+					double min = Long.MAX_VALUE;	//la classe Long racchiude un valore del tipo primitivo Long in un oggetto
+													//MAX_VALUE :costante che mantiene il valore massimo che può avere un Long
 					for(Nerc n : this.prestiti.get(nerc)) {
 						DefaultWeightedEdge edge = this.grafo.getEdge(nerc, n);
 						if(this.grafo.getEdgeWeight(edge) < min) { 
-							if(!n.getStaPrestando()) {
+							if(!n.getStaPrestando()) {		//se il nerc debitore non sta prestando
 								donatore = n;
 								min = this.grafo.getEdgeWeight(edge);
 						}
@@ -99,7 +102,8 @@ public class Simulatore {
 				
 				if(donatore != null) {
 					System.out.println("\tTROVATO DONATORE: " + donatore);
-					donatore.setStaPrestando(true);
+					donatore.setStaPrestando(true); 
+					//  la data dell' evento FINE_INTERRUZIONE corrisponde alla data di fine interruzione
 					Evento fine = new Evento(Evento.Tipo.FINE_INTERRUZIONE, e.getNerc(), donatore, e.getData_fine(),  e.getDataInizio(), e.getData_fine());
 					queue.add(fine);
 					this.prestiti.get(donatore).add(e.getNerc());	//aggiungo al set di prestiti del donatore, il nerc a cui ha dato energia
@@ -131,7 +135,7 @@ public class Simulatore {
 				
 				
 				//rimuovo dal set di prestiti del donatore il prestito
-				this.prestiti.remove(e.getDonatore()).remove(e.getNerc());
+				this.prestiti.get(e.getDonatore()).remove(e.getNerc());
 				break;
 			}
 		}

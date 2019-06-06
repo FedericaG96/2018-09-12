@@ -51,7 +51,7 @@ public class Model {
 
 	public List<NeighborNerc> getCorrelatedNeighbors(Nerc nerc) {
 		List<NeighborNerc> correlatedNercs = new ArrayList<NeighborNerc>();
-		List<Nerc> neighbors = Graphs.neighborListOf(graph, nerc);
+		List<Nerc> neighbors = Graphs.neighborListOf(graph, nerc);	//lista di vicini di un dato nerc
 		
 		for(Nerc neighbor : neighbors){
 			DefaultWeightedEdge edge = graph.getEdge(nerc, neighbor);
